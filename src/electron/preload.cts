@@ -2,8 +2,7 @@ const electron = require("electron");
 
 electron.contextBridge.exposeInMainWorld("electron", {
   //! inovke is an asyn function and it will expect a response from the backend
-  //@ts-ignore
-  getStaticData: ipcInvoke("getStaticData"),
+  getStaticData: () => ipcInvoke("getStaticData"),
   subscirbeStatistics: (callback) => 
     //here we are actually sending the data to the IPC bus 
     ipcOn("statistics", (stats) => {
@@ -24,10 +23,10 @@ electron.contextBridge.exposeInMainWorld("electron", {
 //! reason for defining this in this preload file because we can't import things from utils file because of the .cts and ts
 //! likewise we can't import things from preload file to utils files because of th extension
 function ipcInvoke<Key extends keyof EventPayloadMapping>(
-    key: Key
-  ): Promise<EventPayloadMapping[Key]> {
-    return electron.ipcRenderer.invoke(key);
-  }
+  key: Key
+): Promise<EventPayloadMapping[Key]> {
+  return electron.ipcRenderer.invoke(key);
+}
   
   function ipcOn<Key extends keyof EventPayloadMapping>(
     key: Key,
