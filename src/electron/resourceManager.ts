@@ -21,7 +21,7 @@ export function pollResources(mainWindow: BrowserWindow) {
     ipcWebContentsSend("statistics", mainWindow.webContents, {
       usuage,
       ramUsage,
-      storageData,
+      storageData: storageData.usage,
     });
   }, POLLING_INTERNVAL);
 }

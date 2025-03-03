@@ -4,12 +4,18 @@ electron.contextBridge.exposeInMainWorld("electron", {
   //! inovke is an asyn function and it will expect a response from the backend
   //@ts-ignore
   getStaticData: ipcInvoke("getStaticData"),
-  subscirbeStatistics: (callback) => {
+  subscirbeStatistics: (callback) => 
     //here we are actually sending the data to the IPC bus 
-    return ipcOn("statistics", (stats) => {
+    ipcOn("statistics", (stats) => {
       callback(stats);
-    });
+    }),
+    subscribeChangeView: (callback) => {
+      //here we are actually sending the data to the IPC bus 
+      return ipcOn("changeView", (stats) => {
+        callback(stats);
+      });
   },
+  sendFrameAction: (payload) => ipcSend("sendFrameAction", payload)
   //! basically satisfies keyword is used for typescript proper functionality
   //! here this keyword says we are expecting these types by giving the type like "electron" in Winodw interface
   //! if we are not getting this please throw an error

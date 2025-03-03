@@ -8,30 +8,58 @@ import { Chart } from "./Chart.js";
 
 function App() {
   const [count, setCount] = useState(0);
+  const [activeView, setActiveView] = useState("Cpu");
 
   const statistics = useStatistics(10);
+
   const cpuUsages = useMemo(
     () => statistics.map((stat) => stat.usuage),
     [statistics]
   );
+  const ramUsages = useMemo(
+    () => statistics.map((stat) => stat.ramUsage),
+    [statistics]
+  );
+  const storageUsages = useMemo(
+    () => statistics.map((stat) => stat.storageData),
+    [statistics]
+  );
 
-  console.log('statistics ', cpuUsages);
-  
+  const acitveUsages = useMemo(() => {
+    switch (activeView) {
+      case "Cpu":
+        return cpuUsages;
+      case "Ram":
+        return ramUsages;
+      case "Storage":
+        return storageUsages;
+    }
+  }, [activeView, cpuUsages, ramUsages, storageUsages]);
+
+  useEffect(() => {
+    return window.electron.subscribeChangeView((view) => setActiveView(view));
+  }, []);
 
   return (
     <>
-        <div className="App">
-          <div style={{ height: 20 }}>
-            <Chart data={cpuUsages} maxDataPoint={10} />
-          </div>
+      <header>
+        <button
+          id="close"
+          onClick={() => window.electron.sendFrameAction("CLOSE")}
+        />
+        <button
+          id="minimise"
+          onClick={() => window.electron.sendFrameAction("MINIMIZE")}
+        />
+        <button
+          id="maxmize"
+          onClick={() => window.electron.sendFrameAction("MAXIMIZE")}
+        />
+      </header>
+      <div className="App">
+        <div style={{ height: 20 }}>
+          <Chart data={acitveUsages} maxDataPoint={10} />
         </div>
-        <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
       </div>
       <h1>Vite + React</h1>
       <div className="card">

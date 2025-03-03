@@ -17,6 +17,15 @@ export function ipcMainHandle<Key extends keyof EventPayloadMapping>(
     return handler();
   });
 }
+export function ipcMainOn<Key extends keyof EventPayloadMapping>(
+  key: Key,
+  handler: (payload: EventPayloadMapping[Key]) => void
+) {
+  ipcMain.on(key, (event, payload) => {
+    validateEventFrame(event.senderFrame);
+    return handler(payload);
+  });
+}
 
 //? created wrapper for send function , so that we can call this wrapper function
 //? whenever we need to create an webcontent send function

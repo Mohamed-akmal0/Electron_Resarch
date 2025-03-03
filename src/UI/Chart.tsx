@@ -7,6 +7,8 @@ type chartProps = {
 };
 
 export function Chart(props: chartProps) {
+  console.log('chat data', props.data);
+  
   const modifiedData = useMemo(() => {
     const points = props.data.map((point) => ({ value: point * 100 }));
 
