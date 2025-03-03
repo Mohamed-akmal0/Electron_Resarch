@@ -1,28 +1,28 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
 import { BaseChart } from "./BaseChart.js";
+import { useStatistics } from "./useStatistics.js";
+import { Chart } from "./Chart.js";
 
 function App() {
   const [count, setCount] = useState(0);
 
-  useEffect(() => {
-    const unSub = window.electron.subscirbeStatistics((stats) =>
-      console.log(stats)
-    );
-    return unSub;
-  }, []);
+  const statistics = useStatistics(10);
+  const cpuUsages = useMemo(
+    () => statistics.map((stat) => stat.usuage),
+    [statistics]
+  );
+
+  console.log('statistics ', cpuUsages);
+  
 
   return (
     <>
         <div className="App">
           <div style={{ height: 20 }}>
-            <BaseChart
-              data={[{ value: 25 }, { value: 30 }, { value: 100 }]}
-              fill="#0A4D5C"
-              stroke="#5DD4EE"
-            />
+            <Chart data={cpuUsages} maxDataPoint={10} />
           </div>
         </div>
         <div>
